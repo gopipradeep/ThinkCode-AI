@@ -1,5 +1,5 @@
 #!/bin/bash
 
-npm install
-npm run build
-npx serve -s build
+cd online-compiler
+mvn clean package
+java -jar target/your-backend.jar
