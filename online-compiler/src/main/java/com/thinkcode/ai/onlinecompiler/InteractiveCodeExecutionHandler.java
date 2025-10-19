@@ -313,35 +313,34 @@ public class InteractiveCodeExecutionHandler extends TextWebSocketHandler {
     }
     
     private void handleInputUniversal(String sessionId, String inputData, WebSocketSession session) {
-        Process process = processes.get(sessionId);
-        PrintWriter writer = writers.get(sessionId);
-        String language = sessionLanguages.getOrDefault(sessionId, "unknown");
-        
-        if (process != null && process.isAlive() && writer != null) {
-            try {
-                // CRITICAL FIX: Send the newline character for console-based input
-                writer.println(inputData);
-                writer.flush();
-                
-                // Set input flag to false since we just sent input
-                inputRequestedFlags.computeIfPresent(sessionId, (k, v) -> { v.set(false); return v; });
-                
-                // FIX: Increased synchronization delay to 150ms for reliable prompt display
-                // This gives the executed process time to print the next prompt and for the gobbler to read it.
-                if ("c".equals(language) || "ruby".equals(language) || "go".equals(language) || "python".equals(language) || "java".equals(language)) {
-                    Thread.sleep(150); 
-                } else {
-                    Thread.sleep(10); // Default small delay for other languages
-                }
-                
-            } catch (Exception e) {
-                sendMessage(session, "error", "Failed to send input: " + e.getMessage());
-            }
-        } else {
-            String errorMsg = String.format("No active process to send input to.");
-            sendMessage(session, "error", errorMsg);
+    Process process = processes.get(sessionId);
+    PrintWriter writer = writers.get(sessionId);
+    String language = sessionLanguages.getOrDefault(sessionId, "unknown");
+
+    if (process != null && process.isAlive() && writer != null) {
+        writer.println(inputData);
+        writer.flush();
+        if (writer.checkError()) {
+            // Error detected, process might be dead or stream broken
+            sendMessage(session, "error", "Failed to send input: Stream error");
         }
+        // Delay for the process to print prompt, can be adjusted
+        try {
+            if ("c".equals(language) || "ruby".equals(language) || "go".equals(language) 
+                || "python".equals(language) || "java".equals(language)) {
+                Thread.sleep(150);
+            } else {
+                Thread.sleep(10);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    } else {
+        sendMessage(session, "error", "No active process to send input to.");
     }
+}
+
+
     
     // FIX: Added session and sessionId parameters for use in error/output streaming during compilation steps.
     private String[] getCommand(String language, String code, Path tempDir, WebSocketSession session, String sessionId) throws Exception {
@@ -472,21 +471,21 @@ public class InteractiveCodeExecutionHandler extends TextWebSocketHandler {
                 return new String[]{"go", "run", goFile.toString()};
                 
             case "c":
-                Path cFile = tempDir.resolve("main.c");
-                Files.writeString(cFile, code);
-                
-                // Using -std=c99 
-                ProcessBuilder gcc = new ProcessBuilder("gcc", "-std=c99", cFile.toString(), "-o", tempDir.resolve("main").toString());
-                gcc.directory(tempDir.toFile());
-                Process cCompile = gcc.start();
-                boolean cFinished = cCompile.waitFor(15, TimeUnit.SECONDS);
-                
-                if (!cFinished || cCompile.exitValue() != 0) {
-                    String error = getErrorOutput(compile.getErrorStream());
-                    throw new Exception("C compilation failed: " + error);
-                }
-                
-                return new String[]{tempDir.resolve("main").toString()};
+    Path cFile = tempDir.resolve("main.c");
+    Files.writeString(cFile, code);
+
+    ProcessBuilder gcc = new ProcessBuilder("gcc", "-std=c99", cFile.toString(), "-o", tempDir.resolve("main").toString());
+    gcc.directory(tempDir.toFile());
+    Process cCompile = gcc.start();
+    boolean cFinished = cCompile.waitFor(15, TimeUnit.SECONDS);
+
+    if (!cFinished || cCompile.exitValue() != 0) {
+        String error = getErrorOutput(cCompile.getErrorStream());
+        throw new Exception("C compilation failed: " + error);
+    }
+
+    // Prefix execution with stdbuf to disable output buffering
+    return new String[]{"stdbuf", "-o0", "-e0", tempDir.resolve("main").toString()};
                 
             case "csharp":
                 // 1. Detect Main Class Name

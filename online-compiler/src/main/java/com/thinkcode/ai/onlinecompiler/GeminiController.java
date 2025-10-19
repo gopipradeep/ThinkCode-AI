@@ -47,37 +47,57 @@ public class GeminiController {
             String codeBlock = "\n```" + language + "\n" + code + "\n```";
 
             if ("analysis".equalsIgnoreCase(type)) {
-                // MODIFIED PROMPT: Now explicitly requests Big O notation immediately following the heading
-                prompt = "As an expert code analyst, provide a concise complexity analysis for the following " + language + " code. "
-                       + "Your response must be a single, clean block of HTML. "
-                       + "For 'Time Complexity' and 'Space Complexity' sections, include the Big O notation using <code> tags directly beside the <h4> heading (e.g., <h4>Time Complexity <code>O(N)</code></h4>) and then provide the explanation in a separate <p> tag. "
-                       + "Use <h4> for all headings. Use <p> for explanations. "
-                       + "If the provided code is not optimal, you MUST include a section with the heading <h4>Optimal Approach</h4>. "
-                       + "In this section, explain the better approach in words and provide its Time and Space Complexity (in <code> tags). **Do not provide the full optimized code snippet.** "
-                       + "Do not use markdown. Ensure there are no extra line breaks or spacing between HTML elements. The entire response should be compact and ready to be injected directly into a div."
-                       + "\n\nCode to analyze:\n```" + language + "\n"
-                       + code + "\n```";
-                       
-            } else if ("explain".equalsIgnoreCase(type)) {
-                
-                String contextSegment = "";
-                if (!executionContext.isEmpty()) {
-                    contextSegment = "The user has run this code with the following console output and inputs:\n<pre>" 
-                                   + executionContext
-                                   + "</pre>This execution history must be central to your explanation, especially if an error (like a runtime crash) occurred due to input data. You must diagnose and explain the error.";
-                }
+                    // MODIFIED PROMPT: Now explicitly requests Big O notation immediately following the heading
+                prompt = 
+                        "As an expert software engineer and algorithm analyst, perform a precise and well-structured complexity analysis of the following " + language + " code. " +
+                        "Your output must be a **single, clean, and compact block of HTML** — ready to be injected directly into a web page container (e.g., a <div>). " +
 
-                // EXPLAIN PROMPT: Strict HTML output (Beginner-friendly)
-                prompt = "You are a friendly and helpful programming tutor. Your task is to explain the execution of a piece of code to a beginner. "
-                       + "Describe the code's journey step-by-step, as if you were telling a story. "
-                       + "Your response must be a single, clean block of HTML. "
-                       + "Use <h4> for headings for each major step (e.g., 'Step 1: Setting Things Up'). "
-                       + "Use <p> for your explanations. "
-                       + "Use <code> tags to highlight variable names and their values (e.g., 'the variable <code>count</code> is now <code>5</code>'). "
-                       + "Do not use markdown. The entire response should be compact and easy to read. "
-                       + (executionContext.isEmpty() ? "" : contextSegment)
-                       + "\n\nHere is the " + language + " code to explain:\n```" + language + "\n"
-                       + code + "\n```";
+                            "Follow these exact formatting rules:\n" +
+                            "1. Use <h4> headings for each main section.\n" +
+                            "2. For 'Time Complexity' and 'Space Complexity', include the Big O notation **inside <code> tags**, placed directly beside the <h4> heading (e.g., <h4>Time Complexity <code>O(N)</code></h4>).\n" +
+                            "3. Provide clear, concise explanations in <p> tags immediately below each heading.\n" +
+                            "4. If the code is not optimal, add an additional section:\n" +
+                            "   <h4>Optimal Approach</h4>\n" +
+                            "   <p>Describe a more efficient solution in plain language and include its improved Time and Space complexities (also inside <code> tags).</p>\n" +
+                            "5. Do not include any markdown syntax, code fences, or full code snippets in your response.\n" +
+                            "6. Avoid extra line breaks, indentation, or unnecessary whitespace between HTML elements. The final output should be compact, valid HTML.\n\n" +
+
+                            "Your analysis should highlight algorithmic behavior, data structure usage, and any trade-offs clearly and professionally.\n\n" +
+
+                            "Code to analyze:\n```" + language + "\n" + code + "\n```";
+
+                        
+                } else if ("explain".equalsIgnoreCase(type)) {
+                    
+                    String contextSegment = "";
+                    if (!executionContext.isEmpty()) {
+                        contextSegment = 
+                            "The following console output and user inputs were recorded during the code’s execution:<br/>" +
+                            "<pre>" + executionContext + "</pre>" +
+                            "Use this execution history to clarify how the program behaved, especially if any errors or unexpected outputs occurred. " +
+                            "If a runtime or logical error is detected, clearly explain its cause and what part of the code led to it.";
+                    }
+
+                    // EXPLAIN PROMPT: Structured, HTML-based explanation
+                    prompt = 
+                        "You are an experienced programming instructor. Your task is to provide a clear, step-by-step explanation of how the following " + language + 
+                        " code works. The goal is to help learners understand what each part of the code does and how the program executes overall.\n\n" +
+
+                        "Your response must be a single, well-structured block of valid HTML — ready to be rendered directly inside a webpage. " +
+                        "Follow these exact rules for formatting:\n" +
+                        "1. Use <h4> for section headings such as 'Overview', 'Step-by-Step Execution', and 'Key Takeaways'.\n" +
+                        "2. Inside the step-by-step section, explain major operations in logical order (e.g., initialization, loops, condition checks, function calls, I/O handling).\n" +
+                        "3. Use <p> tags for your explanations — make them concise, factual, and easy to understand.\n" +
+                        "4. Use <code> tags to highlight keywords, variable names, values, and important expressions (e.g., 'the variable <code>x</code> becomes <code>5</code>').\n" +
+                        "5. If the code produces output or an error, include a short section <h4>Program Output</h4> summarizing the final result or cause of failure.\n" +
+                        "6. Do NOT include markdown, code fences, or unnecessary spacing. The HTML must be compact, semantic, and visually clean.\n" +
+                        "7. Avoid storytelling — focus on clarity, correctness, and logical flow.\n\n" +
+
+                        "The explanation should be written in an approachable yet technically accurate tone, focusing on what happens and why.\n\n" +
+                        (executionContext.isEmpty() ? "" : contextSegment) +
+                        "\n\nHere is the " + language + " code to explain:\n```" + language + "\n" + code + "\n```";
+
+
 
             } else {
                 return ResponseEntity.badRequest()
