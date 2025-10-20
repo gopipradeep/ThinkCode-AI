@@ -47,20 +47,27 @@ public class ContainerPoolManager {
     }
 
     private String startContainer(String language) throws Exception {
-        String imageName = getImageForLanguage(language);
-        ProcessBuilder pb = new ProcessBuilder(
-            "docker", "run", "-dit", "--rm", imageName, "sleep", "infinity"
-        );
+    String imageName = getImageForLanguage(language);
 
-        Process process = pb.start();
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            String containerId = reader.readLine().trim();
-            process.waitFor();
-            System.out.println("Started container: " + containerId + " for language: " + language);
-            return containerId;
-        }
+    if (language.equalsIgnoreCase("php")) {
+        // Use php-sockets image and install sockets extension if needed
+        imageName = "php-sockets:8.3";
     }
+
+    ProcessBuilder pb = new ProcessBuilder(
+        "docker", "run", "-dit", "--rm", imageName, "sleep", "infinity"
+    );
+
+    Process process = pb.start();
+
+    try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+        String containerId = reader.readLine().trim();
+        process.waitFor();
+        System.out.println("Started container: " + containerId + " for language: " + language);
+        return containerId;
+    }
+}
+
 
     public String leaseContainer(String language) throws InterruptedException {
         BlockingQueue<String> pool = containerPools.get(language);
@@ -88,8 +95,10 @@ public class ContainerPoolManager {
             case "csharp": return "mcr.microsoft.com/dotnet/sdk:7.0";
             case "javascript": return "node:18";
             case "ruby": return "ruby:3";
-            case "php": return "php:8-cli";
+            case "php": return "php-sockets:8.3";
             case "typescript": return "node:18";
+
+        
             
             default: throw new IllegalArgumentException("No Docker image for language: " + language);
         }

@@ -1,0 +1,10 @@
+FROM php:8-cli
+
+# Install dependencies for building PHP extensions
+RUN apt-get update && apt-get install -y \
+        libssl-dev \
+        && docker-php-ext-install sockets \
+        && rm -rf /var/lib/apt/lists/*
+
+CMD ["sleep", "infinity"]
+    
