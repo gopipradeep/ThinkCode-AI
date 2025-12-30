@@ -1,33 +1,17 @@
-HELP.md
+# Java
 target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+*.class
+*.jar
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# Node/React
+node_modules/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
+.env
 
-### VS Code ###
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Misc
 .vscode/
+.idea/
