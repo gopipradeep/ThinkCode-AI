@@ -538,20 +538,28 @@ public class InteractiveCodeExecutionHandler extends TextWebSocketHandler {
             return new String[]{"node", jsFile.toString()};
             
         case "php":
-            Path phpFile = tempDir.resolve("main.php"); 
+            Path phpFile = tempDir.resolve("main.php");
             Files.writeString(phpFile, code, StandardCharsets.UTF_8);
-            return new String[]{"php", "-n", "-d", "display_errors=1", phpFile.toString()};
+            return new String[]{"php", phpFile.toString()};
 
         case "go":
-            Path goFile = tempDir.resolve("main.go"); 
+            Path goFile = tempDir.resolve("main.go");
             Files.writeString(goFile, code, StandardCharsets.UTF_8);
-            ProcessBuilder goBuild = new ProcessBuilder("go", "build", "-o", tempDir.resolve("main").toString(), goFile.toString());
-            goBuild.directory(tempDir.toFile()); 
-            compile = goBuild.start();
+            // In Linux containers, the command is usually 'go'
+            return new String[]{"go", "run", goFile.toString()};
+            
+case "csharp":
+            Path csFile = tempDir.resolve("program.cs");
+            Files.writeString(csFile, code, StandardCharsets.UTF_8);
+            // Compile using 'mcs' (Mono Compiler)
+            ProcessBuilder mcs = new ProcessBuilder("mcs", "-out:" + tempDir.resolve("program.exe").toString(), csFile.toString());
+            mcs.directory(tempDir.toFile());
+            compile = mcs.start();
             if (!compile.waitFor(20, TimeUnit.SECONDS) || compile.exitValue() != 0) {
-                throw new Exception("Go build failed:\n" + getErrorOutput(compile.getErrorStream()));
+                throw new Exception("C# compilation failed");
             }
-            return new String[]{tempDir.resolve("main").toString()};
+            // Run using 'mono'
+            return new String[]{"mono", tempDir.resolve("program.exe").toString()};
             
         case "ruby":
             Path rbFile = tempDir.resolve("main.rb");
