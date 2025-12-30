@@ -1,6 +1,0 @@
-# Use official PHP CLI as base
-FROM php:8.3-cli
-
-# Install required packages and sockets extension
-RUN apt-get update && apt-get install -y iputils-ping \
-    && docker-php-ext-install sockets
