@@ -1,0 +1,36 @@
+2025-12-30T09:04:31.261Z [INFO] ----------------------invoke generate_upgrade_plan----------------------
+2025-12-30T09:04:31.262Z [INFO] [Tool.invoke]({name: generate_upgrade_plan, input: {
+  "projectPath": "C:/Users/sritu/Desktop/ThinkCode-AI/online-compiler",
+  "targetJavaVersion": "21"
+}}).
+2025-12-30T09:04:31.262Z [INFO] [Plan.tryStartTask]({tool:generate_upgrade_plan, nextTask:{type:undefined, tool:undefined}}
+2025-12-30T09:04:31.263Z [INFO] [Plan.tryStartTask]: no next task, create new one.
+2025-12-30T09:04:31.263Z [INFO] [Plan.createTaskAtStart]({tool: generate_upgrade_plan, input: {
+  "projectPath": "C:/Users/sritu/Desktop/ThinkCode-AI/online-compiler",
+  "targetJavaVersion": "21",
+  "sessionId": "20251230090431"
+}}).
+2025-12-30T09:04:31.264Z [INFO] [Plan.tryStartTask]: starting task generatePlan
+2025-12-30T09:04:31.265Z [INFO] [Task.start](): Starting task generatePlan
+2025-12-30T09:04:31.266Z [INFO] [Task.start](1): Started task generatePlan
+2025-12-30T09:04:31.268Z [INFO] [Tool.invoke] validate GitHub Copilot license.
+2025-12-30T09:04:31.269Z [INFO] [Tool.invoke] do pre-invoke.
+2025-12-30T09:04:31.269Z [INFO] [Tool.invoke] do invoke.
+2025-12-30T09:04:31.296Z [INFO] [Task.start](): Starting task generatePlan
+2025-12-30T09:04:31.297Z [INFO] [Task.start](1.1): Started task generatePlan
+2025-12-30T09:04:31.298Z [INFO] ---------------------prepare install_jdk----------------------
+2025-12-30T09:04:31.299Z [INFO] [Tool.prepareInvocation]({name: install_jdk, input: {
+  "sessionId": "20251230090431",
+  "version": "17",
+  "dest": "C:\\Users\\sritu\\.jdk",
+  "reason": "JDK 17 is required to build the project, but not found on the machine."
+}}).
+2025-12-30T09:04:31.299Z [INFO] [Tool.prepareInvocation] do prepare invocation.
+2025-12-30T09:04:33.222Z [INFO] [Tool.prepareInvocation]({result: {
+  "invocationMessage": "Download and install JDK",
+  "confirmationMessages": {
+    "title": "Download and install JDK",
+    "message": "\nJDK 17 is required to build the project, but not found on the machine.\nThis tool will download and install JDK 17 from Microsoft with below settings.\n- **Version**: 17\n- **Vendor**: Microsoft\n- **Url**: https://aka.ms/download-jdk/microsoft-jdk-17.0.16-windows-x64.zip\n- **Destination**: `C:\\Users\\sritu\\.jdk`\n- **Checksum**: SHA256: 53f0c9ec64811a9ab968747076653e5500115db7230d244e4ec53577ca5ec8fc\n- **Signature**: https://aka.ms/download-jdk/microsoft-jdk-17.0.16-windows-x64.zip.sig\n- **Public Key**: http://aka.ms/microsoft_jdk_public_key\n"
+  }
+}}).
+2025-12-30T09:04:33.223Z [INFO] ----------------------prepared install_jdk----------------------

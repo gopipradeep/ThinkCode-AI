@@ -1,0 +1,18 @@
+{
+  "name": "Spring Boot Compiler Codespace",
+  "image": "mcr.microsoft.com/devcontainers/universal:latest",
+  "features": {
+    "docker-in-docker": "latest"
+  },
+  "portsAttributes": {
+    "8080": {
+      "label": "Spring Backend",
+      "onAutoForward": "notify",
+      "visibility": "public"
+    }
+  },
+  "forwardPorts": [8080],
+  "postCreateCommand": "sdk install java 17.0.8-tem && mvn clean install",
+  "postStartCommand": "sudo service docker start && mvn spring-boot:run",
+  "remoteUser": "vscode"
+}

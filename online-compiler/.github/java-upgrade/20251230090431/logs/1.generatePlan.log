@@ -1,0 +1,6 @@
+2025-12-30T09:04:31.269Z [INFO] Initializing project configuration...
+2025-12-30T09:04:31.270Z [INFO] Project C:/Users/sritu/Desktop/ThinkCode-AI/online-compiler is a maven project, try to get java version from pom.xml
+2025-12-30T09:04:31.273Z [INFO] Project java version: 17
+2025-12-30T09:04:31.273Z [INFO] Maven project detected.
+2025-12-30T09:04:31.274Z [INFO] Build tool type: mvnw
+2025-12-30T09:04:31.287Z [ERROR] JDK is not provided or detected for Java 17.
