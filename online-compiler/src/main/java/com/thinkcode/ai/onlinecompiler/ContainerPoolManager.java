@@ -14,7 +14,7 @@ public class ContainerPoolManager {
 
     private final Map<String, BlockingQueue<String>> containerPools = new ConcurrentHashMap<>();
 
-    private final int PREWARM_COUNT = 3;
+    private final int PREWARM_COUNT = 0;
 
     @PostConstruct
     public void initializePools() throws Exception {
