@@ -1,7 +1,0 @@
-2025-12-30T09:04:24.271Z [INFO] Initializing project configuration...
-2025-12-30T09:04:24.272Z [INFO] Project C:/Users/sritu/Desktop/ThinkCode-AI is not a maven project, try to get java version from gradle
-2025-12-30T09:04:24.288Z [INFO] Try to get java version from gradle config files: 
-2025-12-30T09:04:24.288Z [INFO] Try to get java version from gradle properties: undefined
-2025-12-30T09:04:24.289Z [INFO] Project java version: 8
-2025-12-30T09:04:24.290Z [ERROR] Unsupported project type: undefined. only Maven, Maven Wrapper and Gradle Wrapper project is supported.
-2025-12-30T09:04:24.291Z [ERROR] Failed to prepare project configuration or init upgrade options: Unsupported project type: undefined. only Maven, Maven Wrapper and Gradle Wrapper project is supported. Please choose a valid supported project.
